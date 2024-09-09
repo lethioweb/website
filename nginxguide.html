@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deploying a Static Website with Nginx</title>
+    <link rel="stylesheet" href="enhanced.css">
+</head>
+<body>
+    <header>
+        <h1>Deploying a Static Website with Nginx</h1>
+        <p>This guide walks through how to deploy a static website on a cloud server using Nginx.</p>
+    </header>
+
+    <nav>
+        <a href="index.html">Back to Home</a>
+    </nav>
+
+    <section id="steps">
+        <h2>Step-by-Step Guide</h2>
+        <ol>
+            <li><strong>Step 1: Install Nginx</strong>
+                <p>First, install Nginx on your cloud server:</p>
+                <pre class="code-block"><code>sudo apt update
+sudo apt install nginx</code></pre>
+            </li>
+
+            <li><strong>Step 2: Upload Your Website Files</strong>
+                <p>Use the <code>scp</code> command to securely copy your local files to the Nginx web directory:</p>
+                <pre class="code-block"><code>scp -r /local-path-to-your-site/* user@your-server-ip:/var/www/html/</code></pre>
+            </li>
+
+            <li><strong>Step 3: Set Permissions</strong>
+                <p>Ensure the correct permissions are set so that Nginx can serve the files:</p>
+                <pre class="code-block"><code>sudo chown -R www-data:www-data /var/www/html/
+sudo chmod -R 755 /var/www/html/</code></pre>
+            </li>
+
+            <li><strong>Step 4: Reload Nginx</strong>
+                <p>After uploading and setting permissions, reload Nginx to apply the changes:</p>
+                <pre class="code-block"><code>sudo systemctl reload nginx</code></pre>
+            </li>
+        </ol>
+    </section>
+
+    <footer>
+        <section>
+            <p>This guide is part of a collection of cloud learning projects. <a href="index.html">Go back to the homepage</a>.</p>
+        </section>
+        <section>
+            <p>This project is licensed under the MIT License. <a href="https://opensource.org/licenses/MIT">Read the full license here</a>.</p>
+        </section>
+    </footer>
+</body>
+</html>

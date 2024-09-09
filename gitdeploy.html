@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deploying with Git from GitHub</title>
+    <link rel="stylesheet" href="enhanced.css">
+</head>
+<body>
+    <header>
+        <h1>Deploying Website Updates with Git from GitHub</h1>
+        <p>This guide explains how to set up Git on your server to allow updating the website directly from GitHub or your local machine, using the <strong>main</strong> branch as the default.</p>
+    </header>
+
+    <nav>
+        <a href="index.html">Back to Home</a>
+    </nav>
+
+    <section id="steps">
+        <h2>Step-by-Step Guide</h2>
+        <ol>
+            <li><strong>Step 1: Install Git on the Server</strong>
+                <p>Ensure Git is installed by running:</p>
+                <pre class="code-block"><code>sudo apt update
+sudo apt install git</code></pre>
+            </li>
+
+            <li><strong>Step 2: Create a Bare Repository</strong>
+                <p>Create a Git repository on the server:</p>
+                <pre class="code-block"><code>sudo mkdir -p /var/repo/website.git
+cd /var/repo/website.git
+sudo git init --bare</code></pre>
+                <p>Set the default branch to <strong>main</strong> for future repositories:</p>
+                <pre class="code-block"><code>git config --global init.defaultBranch main</code></pre>
+            </li>
+
+            <li><strong>Step 3: Set Up a Post-Receive Hook</strong>
+                <p>Create a post-receive hook to deploy the site automatically:</p>
+                <pre class="code-block"><code>nano /var/repo/website.git/hooks/post-receive</code></pre>
+                <p>Add this content:</p>
+                <pre class="code-block"><code>#!/bin/bash
+GIT_WORK_TREE=/var/www/html git checkout -f main</code></pre>
+                <p>Then, make it executable:</p>
+                <pre class="code-block"><code>chmod +x /var/repo/website.git/hooks/post-receive</code></pre>
+            </li>
+
+            <li><strong>Step 4: Set Up Your Local Repository</strong>
+                <p>On your local machine, add your server as a remote:</p>
+                <pre class="code-block"><code>git remote add production ssh://user@your-server-ip:/var/repo/website.git</code></pre>
+            </li>
+
+            <li><strong>Step 5: Push Changes to the Server</strong>
+                <p>After making changes, commit them and push to the <strong>main</strong> branch on the server:</p>
+                <pre class="code-block"><code>git push production main</code></pre>
+                <p>The website will automatically update.</p>
+            </li>
+        </ol>
+    </section>
+
+    <footer>
+        <section>
+            <p>This guide is part of the Cloud Learning Projects. <a href="index.html">Go back to the homepage</a>.</p>
+        </section>
+        <section>
+            <p>This project is licensed under the MIT License. <a href="https://opensource.org/licenses/MIT">Read the full license here</a>.</p>
+        </section>
+    </footer>
+</body>
+</html>

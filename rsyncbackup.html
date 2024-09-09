@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automating Backups with Rsync and Cron</title>
+    <link rel="stylesheet" href="enhanced.css">
+</head>
+<body>
+    <header>
+        <h1>Automating Backups with Rsync and Cron</h1>
+        <p>This guide explains how to automate backups on your Debian server using rsync and cron. In this example, we will be backing up the static website set up in the <a href="nginxguide.html">Deploying a Static Website with Nginx</a> guide.</p>
+    </header>
+
+    <nav>
+        <a href="index.html">Back to Home</a>
+    </nav>
+
+    <section id="steps">
+        <h2>Step-by-Step Guide</h2>
+        <ol>
+            <li><strong>Step 1: Install Rsync</strong>
+                <p>First, install rsync on your Debian server by running the following commands:</p>
+                <pre class="code-block"><code>sudo apt update
+sudo apt install rsync</code></pre>
+            </li>
+
+            <li><strong>Step 2: Create a Backup Directory</strong>
+                <p>Create a directory where backups will be stored:</p>
+                <pre class="code-block"><code>mkdir -p /path/to/backup-directory</code></pre>
+            </li>
+
+            <li><strong>Step 3: Rsync Command Setup</strong>
+                <p>Use rsync to copy the static website files from <code>/var/www/html/</code> to the backup directory:</p>
+                <pre class="code-block"><code>rsync -avz /var/www/html/ /path/to/backup-directory/</code></pre>
+            </li>
+
+            <li><strong>Step 4: Set Up SSH for Remote Backups (Optional)</strong>
+                <p>If you want to back up to a remote server, set up an SSH key for passwordless login:</p>
+                <pre class="code-block"><code>ssh-keygen -t rsa -b 4096 -f ~/.ssh/backup_key
+ssh-copy-id -i ~/.ssh/backup_key.pub user@remote-server</code></pre>
+                <p>Then, use rsync over SSH to copy files to the remote backup server:</p>
+                <pre class="code-block"><code>rsync -avz -e "ssh -i /path/to/backup_key" /var/www/html/ user@backup-server:/path/to/backup-directory/</code></pre>
+            </li>
+
+            <li><strong>Step 5: Automate with Cron</strong>
+                <p>To schedule regular backups, open the cron configuration:</p>
+                <pre class="code-block"><code>crontab -e</code></pre>
+                <p>Add the following line to run the backup every day at midnight:</p>
+                <pre class="code-block"><code>0 0 * * * rsync -avz /var/www/html/ /path/to/backup-directory/</code></pre>
+            </li>
+
+            <li><strong>Step 6: Testing the Backup</strong>
+                <p>Test the rsync command to ensure the backup runs correctly.</p>
+            </li>
+
+            <li><strong>Step 7: Restoring from Backup</strong>
+                <p>To restore the files from the backup directory to <code>/var/www/html/</code>, use the following command:</p>
+                <pre class="code-block"><code>rsync -avz /path/to/backup-directory/ /var/www/html/</code></pre>
+            </li>
+        </ol>
+    </section>
+
+    <footer>
+        <section>
+            <p>This guide is part of the Cloud Learning Projects. <a href="index.html">Go back to the homepage</a>.</p>
+        </section>
+        <section>
+            <p>This project is licensed under the MIT License. <a href="https://opensource.org/licenses/MIT">Read the full license here</a>.</p>
+        </section>
+    </footer>
+</body>
+</html>

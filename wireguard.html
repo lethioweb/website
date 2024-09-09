@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setting Up WireGuard VPN</title>
+    <link rel="stylesheet" href="enhanced.css">
+</head>
+<body>
+    <header>
+        <h1>Setting Up WireGuard VPN</h1>
+        <p>This guide explains how to set up WireGuard VPN on a cloud server for secure and fast communications between devices.</p>
+    </header>
+
+    <nav>
+        <a href="index.html">Back to Home</a>
+    </nav>
+
+    <section id="introduction">
+        <h2>Introduction</h2>
+        <p>WireGuard is a modern, simple, and fast VPN that uses state-of-the-art cryptography. In this guide, we will walk through the process of installing and configuring WireGuard on a cloud server, as well as connecting a device like a phone to the VPN.</p>
+    </section>
+
+    <section id="steps">
+        <h2>Step-by-Step Guide</h2>
+        <ol>
+            <li><strong>Step 1: Install WireGuard</strong>
+                <p>First, install WireGuard on your cloud server by running the following commands:</p>
+                <pre class="code-block"><code>sudo apt update
+sudo apt install wireguard</code></pre>
+            </li>
+
+            <li><strong>Step 2: Generate Server Keys</strong>
+                <p>Next, generate the private and public keys for your WireGuard server. This step ensures secure communication between the server and client devices.</p>
+                <pre class="code-block"><code>cd /etc/wireguard/
+umask 077
+wg genkey | tee privatekey | wg pubkey > publickey</code></pre>
+            </li>
+
+            <li><strong>Step 3: Configure WireGuard</strong>
+                <p>Now, create and edit the WireGuard configuration file on the server:</p>
+                <pre class="code-block"><code>sudo nano /etc/wireguard/wg0.conf</code></pre>
+                <p>Add the following content, replacing <code>[YourPublicKey]</code> with the generated public key, and <code>[YourPrivateKey]</code> with the private key:</p>
+                <pre class="code-block"><code>[Interface]
+PrivateKey = [YourPrivateKey]
+Address = 10.0.0.1/24
+ListenPort = 51820
+
+[Peer]
+PublicKey = [ClientPublicKey]
+AllowedIPs = 10.0.0.2/32</code></pre>
+            </li>
+
+            <li><strong>Step 4: Enable IP Forwarding</strong>
+                <p>Enable IP forwarding on the server so it can route traffic through the VPN. Edit the sysctl configuration:</p>
+                <pre class="code-block"><code>sudo nano /etc/sysctl.conf</code></pre>
+                <p>Uncomment the following line:</p>
+                <pre class="code-block"><code>net.ipv4.ip_forward=1</code></pre>
+                <p>Apply the changes:</p>
+                <pre class="code-block"><code>sudo sysctl -p</code></pre>
+            </li>
+
+            <li><strong>Step 5: Start WireGuard</strong>
+                <p>Start the WireGuard interface:</p>
+                <pre class="code-block"><code>sudo wg-quick up wg0</code></pre>
+                <p>To enable WireGuard at boot, use the following command:</p>
+                <pre class="code-block"><code>sudo systemctl enable wg-quick@wg0</code></pre>
+            </li>
+
+            <li><strong>Step 6: Configure Client Device</strong>
+                <p>On your client device (such as your phone), install the WireGuard app, and use the following configuration to connect:</p>
+                <pre class="code-block"><code>[Interface]
+PrivateKey = [ClientPrivateKey]
+Address = 10.0.0.2/32
+
+[Peer]
+PublicKey = [ServerPublicKey]
+Endpoint = [ServerIP]:51820
+AllowedIPs = 0.0.0.0/0</code></pre>
+                <p>Replace <code>[ClientPrivateKey]</code>, <code>[ServerPublicKey]</code>, and <code>[ServerIP]</code> with the respective values from your server and client keys.</p>
+            </li>
+
+            <li><strong>Step 7: Test the Connection</strong>
+                <p>Once the client configuration is complete, you can test the VPN connection by starting WireGuard on your client device. If everything is set up correctly, your device should route all traffic through the VPN.</p>
+            </li>
+        </ol>
+    </section>
+
+    <footer>
+        <section>
+            <p>This guide is part of a collection of cloud learning projects. <a href="index.html">Go back to the homepage</a>.</p>
+        </section>
+        <section>
+            <p>This project is licensed under the MIT License. <a href="https://opensource.org/licenses/MIT">Read the full license here</a>.</p>
+        </section>
+    </footer>
+</body>
+</html>

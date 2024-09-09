@@ -1,0 +1,86 @@
+/* Importing the font */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap');
+
+:root {
+    --font-family: 'JetBrains Mono', monospace;
+    --background-color: #f4f4f9;
+    --primary-color: #3b4252;
+    --accent-color: #88c0d0;
+    --highlight-color: #5e81ac;
+    --text-color: #2e3440;
+    --border-radius: 6px;
+}
+
+/* Body Styling */
+body {
+    margin: 0;
+    font-family: var(--font-family);
+    background-color: var(--background-color);
+    color: var(--text-color);
+    padding: 20px;
+    max-width: 80ch;
+    line-height: 1.6;
+    margin: auto;
+}
+
+/* Header Styling */
+h1, h2, h3 {
+    color: var(--primary-color);
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+/* Code Block Styling */
+pre.code-block {
+    background-color: #2e3440;
+    color: #eceff4;
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    overflow-x: auto;
+    font-size: 0.95em;
+    margin-bottom: 1.5rem;
+}
+
+pre.code-block code {
+    display: block;
+    white-space: pre-wrap;
+}
+
+code {
+    background-color: #d8dee9;
+    color: var(--primary-color);
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* Navigation */
+nav ul {
+    padding: 0;
+    list-style: none;
+}
+
+nav ul li {
+    margin-bottom: 10px;
+}
+
+/* Footer Styling */
+footer {
+    text-align: center;
+    margin-top: 2rem;
+    font-size: 0.875em;
+    color: var(--text-color);
+    padding: 1rem 0;
+    background-color: var(--background-color);
+}
+
+footer a {
+    color: var(--highlight-color);
+    text-decoration: underline;
+}
+
+footer a:hover {
+    background-color: transparent;
+    color: var(--highlight-color);
+    text-decoration: none;
+}
