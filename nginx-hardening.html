@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hardening a Static Website on Nginx</title>
+    <title>Hardening Nginx for Static Websites</title>
     <link rel="stylesheet" href="enhanced.css">
 </head>
 <body>
     <header>
-        <h1>Hardening a Static Website on Nginx</h1>
-        <p>This guide walks through several security measures to harden your static website running on Nginx, making it more secure even though you're only serving static content like HTML.</p>
+        <h1>Hardening Nginx for Static Websites</h1>
+        <p>This guide explains how to harden your Nginx configuration for a static website, ensuring your server is protected against common threats. The steps include adding essential security headers, blocking unnecessary access, and configuring SSL/TLS securely.</p>
     </header>
 
     <nav>
@@ -20,57 +20,48 @@
         <h2>Step-by-Step Guide</h2>
         <ol>
             <li><strong>Step 1: Disable Directory Listings</strong>
-                <p>By default, Nginx might display a list of files in a directory if there's no <code>index.html</code>. To prevent this, disable directory browsing by adding this line to your Nginx server block:</p>
-                <pre class="code-block"><code>autoindex off;</code></pre>
+                <p>Directory listings can expose the structure of your website to unwanted visitors. To prevent this, disable directory listings in the Nginx configuration by adding this inside your <code>location /</code> block:</p>
+                <pre class="code-block"><code>location / {
+    try_files $uri $uri/ =404;
+    autoindex off; # Disable directory listing
+}</code></pre>
             </li>
 
-            <li><strong>Step 2: Block Sensitive Files</strong>
-                <p>To ensure that sensitive files like backups, temporary files, and configuration files aren’t exposed, block access to hidden files (those starting with a dot, like <code>.env</code> or <code>.git</code>), by adding this rule to your Nginx config:</p>
+            <li><strong>Step 2: Block Access to Hidden Files</strong>
+                <p>Files like <code>.git</code> or <code>.env</code> should not be publicly accessible. Block access to these hidden files by adding this to your Nginx configuration:</p>
                 <pre class="code-block"><code>location ~ /\.(?!well-known).* {
     deny all;
 }</code></pre>
             </li>
 
-            <li><strong>Step 3: Set Up HTTPS with SSL</strong>
-                <p>Ensure your website is served securely over HTTPS by using Let's Encrypt to set up SSL. If you already have SSL configured, ensure your configuration includes the following for secure SSL settings:</p>
-                <pre class="code-block"><code>ssl_protocols TLSv1.2 TLSv1.3;
-ssl_prefer_server_ciphers on;
-ssl_ciphers HIGH:!aNULL:!MD5;</code></pre>
-                <p>Make sure you have automatic renewal configured for your SSL certificate:</p>
-                <pre class="code-block"><code>sudo certbot renew --dry-run</code></pre>
-            </li>
-
-            <li><strong>Step 4: Add Security Headers</strong>
-                <p>Adding security headers to your Nginx configuration can protect your site from common vulnerabilities like XSS and clickjacking. Add these headers to your Nginx config:</p>
+            <li><strong>Step 3: Add Security Headers</strong>
+                <p>Add the following headers to protect against various attacks such as cross-site scripting (XSS), content-type sniffing, and clickjacking:</p>
                 <pre class="code-block"><code>add_header X-Frame-Options "DENY";
 add_header X-Content-Type-Options "nosniff";
 add_header X-XSS-Protection "1; mode=block";
 add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self';";</code></pre>
             </li>
 
-            <li><strong>Step 5: Limit File Uploads and Access</strong> (Optional)
-                <p>If your static site allows file uploads (though unlikely), make sure to limit file types. For example, block certain file types like scripts that could be used in attacks:</p>
-                <pre class="code-block"><code>location ~* \.(php|pl|py|sh)$ {
-    deny all;
-}</code></pre>
+            <li><strong>Step 4: Enable HSTS (HTTP Strict Transport Security)</strong>
+                <p>HSTS ensures browsers always use HTTPS to connect to your site. Add this to your HTTPS <code>server</code> block:</p>
+                <pre class="code-block"><code>add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;</code></pre>
             </li>
 
-            <li><strong>Step 6: Prevent Hotlinking (Optional)</strong>
-                <p>To prevent other websites from embedding your images or files and consuming your bandwidth, you can block hotlinking by adding the following:</p>
-                <pre class="code-block"><code>location ~ \.(jpg|jpeg|png|gif)$ {
-    valid_referers none blocked yourdomain.com;
-    if ($invalid_referer) {
-        return 403;
-    }
-}</code></pre>
+            <li><strong>Step 5: Set a Referrer Policy</strong>
+                <p>Control how much referrer information is shared when users navigate away from your site by adding this header:</p>
+                <pre class="code-block"><code>add_header Referrer-Policy "no-referrer";</code></pre>
             </li>
 
-            <li><strong>Step 7: Keep Nginx and System Updated</strong>
-                <p>Always ensure your Nginx and server packages are up to date to minimize vulnerabilities. Use the following commands regularly:</p>
-                <pre class="code-block"><code>sudo apt update
-sudo apt upgrade</code></pre>
+            <li><strong>Step 6: Control Browser Permissions</strong>
+                <p>Use the Permissions Policy header to control what browser features (e.g., geolocation, microphone) can be used on your site:</p>
+                <pre class="code-block"><code>add_header Permissions-Policy "geolocation=(), microphone=(), camera=()";</code></pre>
             </li>
         </ol>
+    </section>
+
+    <section id="testing">
+        <h2>Testing Your Configuration</h2>
+        <p>After updating your Nginx configuration with these hardening steps, it’s important to test your setup. There are various online tools available to analyze your website’s security headers and SSL/TLS configuration. These tools will help ensure that your changes have been applied correctly and identify any remaining vulnerabilities.</p>
     </section>
 
     <footer>
