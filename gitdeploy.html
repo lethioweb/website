@@ -45,14 +45,29 @@ GIT_WORK_TREE=/var/www/html git checkout -f main</code></pre>
             </li>
 
             <li><strong>Step 4: Set Up Your Local Repository</strong>
-                <p>On your local machine, add your server as a remote:</p>
-                <pre class="code-block"><code>git remote add production ssh://user@your-server-ip:/var/repo/website.git</code></pre>
+                <p>On your local machine, navigate to your local Git repository and add your server as a remote:</p>
+                <pre class="code-block"><code>git remote add production ssh://<your-username>@<your-server-ip>:/var/repo/website.git</code></pre>
+                <p><strong>Important:</strong> Replace <code>&lt;your-username&gt;</code> with your server's username (e.g., <code>root</code>), and <code>&lt;your-server-ip&gt;</code> with the actual IP address of your server.</p>
             </li>
 
             <li><strong>Step 5: Push Changes to the Server</strong>
-                <p>After making changes, commit them and push to the <strong>main</strong> branch on the server:</p>
-                <pre class="code-block"><code>git push production main</code></pre>
-                <p>The website will automatically update.</p>
+                <p>After making changes to your local website files, add and commit them. Then push the changes to the <strong>main</strong> branch on the server:</p>
+                <pre class="code-block"><code>git add .
+git commit -m "Describe your changes"
+git push production main</code></pre>
+                <p>Verify that the website is automatically updated after the push. If it's not, check the post-receive hook permissions and ensure it's executable.</p>
+            </li>
+
+            <li><strong>Step 6: Correct Remote URL (If Necessary)</strong>
+                <p>If you encounter issues connecting to the remote repository, ensure that the remote URL is correctly configured:</p>
+                <pre class="code-block"><code>git remote set-url production ssh://<your-username>@<your-server-ip>:/var/repo/website.git</code></pre>
+                <p>After correcting the URL, try pushing again.</p>
+            </li>
+
+            <li><strong>Step 7: File Permissions on the Server</strong>
+                <p>If files on the server are not being updated, ensure that all files in the web directory have the correct ownership. The web server user (likely <code>www-data</code> for Nginx) should own all files:</p>
+                <pre class="code-block"><code>sudo chown -R www-data:www-data /var/www/html</code></pre>
+                <p>This ensures the server has permission to serve the updated files.</p>
             </li>
         </ol>
     </section>
