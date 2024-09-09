@@ -1,12 +1,85 @@
 <!DOCTYPE html>
-<html lang="">
-  <head>
-    <meta charset="utf-8">
-    <title></title>
-  </head>
-  <body>
-    <header></header>
-    <main></main>
-    <footer></footer>
-  </body>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hardening a Static Website on Nginx</title>
+    <link rel="stylesheet" href="enhanced.css">
+</head>
+<body>
+    <header>
+        <h1>Hardening a Static Website on Nginx</h1>
+        <p>This guide walks through several security measures to harden your static website running on Nginx, making it more secure even though you're only serving static content like HTML.</p>
+    </header>
+
+    <nav>
+        <a href="index.html">Back to Home</a>
+    </nav>
+
+    <section id="steps">
+        <h2>Step-by-Step Guide</h2>
+        <ol>
+            <li><strong>Step 1: Disable Directory Listings</strong>
+                <p>By default, Nginx might display a list of files in a directory if there's no <code>index.html</code>. To prevent this, disable directory browsing by adding this line to your Nginx server block:</p>
+                <pre class="code-block"><code>autoindex off;</code></pre>
+            </li>
+
+            <li><strong>Step 2: Block Sensitive Files</strong>
+                <p>To ensure that sensitive files like backups, temporary files, and configuration files aren’t exposed, block access to hidden files (those starting with a dot, like <code>.env</code> or <code>.git</code>), by adding this rule to your Nginx config:</p>
+                <pre class="code-block"><code>location ~ /\.(?!well-known).* {
+    deny all;
+}</code></pre>
+            </li>
+
+            <li><strong>Step 3: Set Up HTTPS with SSL</strong>
+                <p>Ensure your website is served securely over HTTPS by using Let's Encrypt to set up SSL. If you already have SSL configured, ensure your configuration includes the following for secure SSL settings:</p>
+                <pre class="code-block"><code>ssl_protocols TLSv1.2 TLSv1.3;
+ssl_prefer_server_ciphers on;
+ssl_ciphers HIGH:!aNULL:!MD5;</code></pre>
+                <p>Make sure you have automatic renewal configured for your SSL certificate:</p>
+                <pre class="code-block"><code>sudo certbot renew --dry-run</code></pre>
+            </li>
+
+            <li><strong>Step 4: Add Security Headers</strong>
+                <p>Adding security headers to your Nginx configuration can protect your site from common vulnerabilities like XSS and clickjacking. Add these headers to your Nginx config:</p>
+                <pre class="code-block"><code>add_header X-Frame-Options "DENY";
+add_header X-Content-Type-Options "nosniff";
+add_header X-XSS-Protection "1; mode=block";
+add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self';";</code></pre>
+            </li>
+
+            <li><strong>Step 5: Limit File Uploads and Access</strong> (Optional)
+                <p>If your static site allows file uploads (though unlikely), make sure to limit file types. For example, block certain file types like scripts that could be used in attacks:</p>
+                <pre class="code-block"><code>location ~* \.(php|pl|py|sh)$ {
+    deny all;
+}</code></pre>
+            </li>
+
+            <li><strong>Step 6: Prevent Hotlinking (Optional)</strong>
+                <p>To prevent other websites from embedding your images or files and consuming your bandwidth, you can block hotlinking by adding the following:</p>
+                <pre class="code-block"><code>location ~ \.(jpg|jpeg|png|gif)$ {
+    valid_referers none blocked yourdomain.com;
+    if ($invalid_referer) {
+        return 403;
+    }
+}</code></pre>
+            </li>
+
+            <li><strong>Step 7: Keep Nginx and System Updated</strong>
+                <p>Always ensure your Nginx and server packages are up to date to minimize vulnerabilities. Use the following commands regularly:</p>
+                <pre class="code-block"><code>sudo apt update
+sudo apt upgrade</code></pre>
+            </li>
+        </ol>
+    </section>
+
+    <footer>
+        <section>
+            <p>This guide is part of the Cloud Learning Projects. <a href="index.html">Go back to the homepage</a>.</p>
+        </section>
+        <section>
+            <p>This project is licensed under the MIT License. <a href="https://opensource.org/licenses/MIT">Read the full license here</a>.</p>
+        </section>
+    </footer>
+</body>
 </html>
