@@ -84,3 +84,12 @@ footer a:hover {
     color: var(--highlight-color);
     text-decoration: none;
 }
+
+footer p {
+    margin-bottom: 0.5rem;
+}
+
+#last-updated {
+font-size: 0.85em;
+color: var(--text-color); /* Or slightly lighter color, like --highlight-color */
+}
