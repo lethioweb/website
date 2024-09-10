@@ -58,6 +58,30 @@ git push production main</code></pre>
                 <p>Verify that the website is automatically updated after the push. If it's not, check the post-receive hook permissions and ensure it's executable.</p>
             </li>
 
+<h2>Step 5.1: Push Changes to Both GitHub and Server</h2>
+<p>To ensure your website's repository stays in sync on both <strong>GitHub</strong> and your <strong>server</strong>, it's important to push changes to both <code>origin</code> (GitHub) and <code>production</code> (your server).</p>
+<ol>
+    <li><strong>Push to GitHub (origin)</strong>:
+        <p>Run the following command to push the changes to your GitHub repository:</p>
+        <pre class="code-block"><code>git push origin main</code></pre>
+    </li>
+
+    <li><strong>Push to Your Server (production)</strong>:
+        <p>To update the live website, push the changes to your server's <code>production</code> remote:</p>
+        <pre class="code-block"><code>git push production main</code></pre>
+    </li>
+
+    <li><strong>Verify the Changes</strong>:
+        <p>Once the changes are pushed to both GitHub and the server, verify the updates:</p>
+        <ul>
+            <li>Check your GitHub repository to ensure the latest changes are reflected.</li>
+            <li>Visit your website to verify that the changes are live.</li>
+        </ul>
+    </li>
+</ol>
+
+<p>By pushing to both <code>origin</code> and <code>production</code>, you ensure that your codebase is properly backed up on GitHub
+
             <li><strong>Step 6: Correct Remote URL (If Necessary)</strong>
                 <p>If you encounter issues connecting to the remote repository, ensure that the remote URL is correctly configured:</p>
                 <pre class="code-block"><code>git remote set-url production ssh://<your-username>@<your-server-ip>:/var/repo/website.git</code></pre>
